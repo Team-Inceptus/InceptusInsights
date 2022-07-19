@@ -1,0 +1,6 @@
+name: ${plugin.name}
+main: ${plugin.main}
+version: ${plugin.version}
+api-version: 1.13
+author: Team Inceptus
+description: ${project.description}
