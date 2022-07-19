@@ -6,20 +6,31 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>inceptusinsights-bukkit-parent</artifactId>
-    <name>InceptusInsights-Bukkit-Parent</name>
-    <packaging>pom</packaging>
+    <artifactId>inceptusinsights-bukkit</artifactId>
+    <name>InceptusInsights-Bukkit</name>
+    <description>1.13+ Bukkit Plugin for InceptusInsights</description>
 
-    <modules>
-        <module>api</module>
-        <module>plugin</module>
-    </modules>
+    <properties>
+        <plugin.main>us.teaminceptus.inceptusinsights.bukkit.InsightsPlugin</plugin.main>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
+            <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
