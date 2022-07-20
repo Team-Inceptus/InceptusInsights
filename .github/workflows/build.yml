@@ -21,6 +21,13 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
           cache: 'maven'
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 'head'
+          bundler-cache: true
+      - name: Setup Environment
+        run: gem install jekyll bundler
       - name: Setup Project
         run: mvn package install
       - name: Maven Information
