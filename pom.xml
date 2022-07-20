@@ -14,10 +14,11 @@
         <plugin.name>InceptusInsights</plugin.name>
         <plugin.version>1.0.0</plugin.version>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
 
-        <development>true</development>
+        <sonar.organization>team-inceptus</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <developers>
@@ -34,6 +35,7 @@
         <module>api</module>
         <module>bukkit</module>
         <module>paper</module>
+        <module>sponge</module>
     </modules>
 
     <repositories>
@@ -47,20 +49,54 @@
             <name>Paper API Repository</name>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>sponge-repo</id>
+            <name>Sponge API Repository</name>
+            <url>https://repo.spongepowered.org/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <build>
         <defaultGoal>package clean install</defaultGoal>
         <finalName>${project.name}-${project.version}</finalName>
-        <resources>
-            <resource>
-                <directory>frontend</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </resource>
-        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <minimizeJar>true</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**/*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.eclipse.jetty</pattern>
+                                    <shadedPattern>us.teaminceptus.jetty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javax.servlet</pattern>
+                                    <shadedPattern>us.teaminceptus.servlet</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
