@@ -25,7 +25,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 'head'
-          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: Setup Environment
         run: gem install jekyll bundler
       - name: Setup Project
@@ -53,7 +58,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 'head'
-          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: Build Project
         run: mvn clean install
   analyze:
@@ -74,7 +84,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 'head'
-          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
