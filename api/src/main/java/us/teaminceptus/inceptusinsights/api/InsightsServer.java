@@ -2,6 +2,12 @@ package us.teaminceptus.inceptusinsights.api;
 
 public final class InsightsServer {
 
-    // TODO: implement
+    private InsightsServer() {
+    }
+
+    public static void startServer() {
+        // TODO
+    }
+
 
 }
