@@ -2,6 +2,9 @@
 <html lang="en">
 
     {% include head.html %}
+    {% unless page.header contains "false" %}
+    {% include header.html %}
+    {% endunless %}
 
     <body>
         {{ content }}

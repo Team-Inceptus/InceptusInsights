@@ -3,7 +3,18 @@
 html, body {
     overflow-x: hidden;
     overflow-y: hidden;
+    margin: 0;
     font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+}
+
+a, a:visited {
+    color: #000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #444; !important;
 }
 
 h1 {
@@ -15,10 +26,60 @@ h1:hover {
     transition: transform 0.5s ease-in-out;
 }
 
+header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 6vh;
+    max-height: 100px;
+    background-color: #e7e6e6;
+    border-bottom: #e0dfdf solid 2px;
+}
+
+div {
+    margin-top: 3vh;
+}
+
+.menu-link {
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: x-large;
+    width: auto;
+    height: 3vh;
+    border-right: black solid 3px;
+    margin-left: 1vw;
+    padding-right: 1vw;
+}
+
+#server-icon {
+    padding-right: 2%;
+    border-right: black solid 5px;
+    margin-left: 1vw;
+    min-height: 32px;
+    min-width: 32px;
+    max-height: 96px;
+    max-width: 96px;
+    height: 5vh;
+    width: auto;
+}
+
 .minimal {
+    padding-top: 30vh;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
     height: 100%;
     width: auto;
-    text-align: center;
-    vertical-align: middle;
+    transition: transform 1s ease-in-out;
+}
+
+.page {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 100%;
+    width: auto;
     transition: transform 1s ease-in-out;
 }
