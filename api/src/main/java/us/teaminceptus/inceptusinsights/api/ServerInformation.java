@@ -8,4 +8,6 @@ public interface ServerInformation {
 
     DataURI getServerIcon();
 
+    String getServerName();
+
 }
