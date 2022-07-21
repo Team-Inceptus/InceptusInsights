@@ -6,4 +6,6 @@ public interface ServerInformation {
 
     Map<String, Object> getServerInformation();
 
+    DataURI getServerIcon();
+
 }

@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface PlayerInformation {
 
-    Map<String, Object> getPlayerInformation();
+    Map<String, Object> getPlayerInformation(String name);
 
 }
