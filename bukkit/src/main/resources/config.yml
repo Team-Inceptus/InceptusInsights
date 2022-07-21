@@ -1,0 +1,8 @@
+# InceptusInsights v${project.version}
+#
+# Crated by Team Inceptus
+
+# The Port to run the website on.
+#
+# This port should not be the same as your server port.
+port: 30325
