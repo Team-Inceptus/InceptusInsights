@@ -10,15 +10,6 @@
     <name>InceptusInsights-API</name>
 
     <build>
-        <resources>
-            <resource>
-                <directory>../frontend/_site</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -32,6 +23,17 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.outputDirectory}/frontend</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../frontend/_site</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                        <include>*.html</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
