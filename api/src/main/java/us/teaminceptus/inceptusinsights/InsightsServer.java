@@ -6,14 +6,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import us.teaminceptus.inceptusinsights.api.ServerInformation;
+import us.teaminceptus.inceptusinsights.api.player.PlayerInformation;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class InsightsServer extends HttpServlet {
 
@@ -36,7 +41,7 @@ public final class InsightsServer extends HttpServlet {
         }
     }
 
-    private static Logger logger = Logger.getLogger(DefaultLogger.class.getName());
+    public static Logger LOGGER = Logger.getLogger(DefaultLogger.class.getName());
     private static final URL FRONTEND_FOLDER = InsightsServer.class.getResource("/frontend/");
 
     private static int port = 30225;
@@ -51,12 +56,31 @@ public final class InsightsServer extends HttpServlet {
     }
 
     public static void setLogger(Logger l) {
-        logger = l;
+        LOGGER = l;
     }
 
     public static void setPort(int port) {
         InsightsServer.port = port;
     }
+
+    private static ServerInformation server;
+    private static PlayerInformation player;
+
+    public static void setInformationFetchers(ServerInformation server, PlayerInformation player) {
+        InsightsServer.server = server;
+        InsightsServer.player = player;
+    }
+
+    private static final Map<String, BiFunction<String, Map<String, String>, String>> DOCUMENT_FUNCTIONS = new HashMap<>() {
+    };
+
+    private static final BiFunction<String, Map<String, String>, String> GLOBAL = (html, params) -> {
+        Document doc = Jsoup.parse(html, "UTF-8");
+
+        if (server.getServerIcon() != null) doc.getElementById("server-icon").attr("src", server.getServerIcon().toDataURI());
+
+        return doc.outerHtml();
+    };
 
     public static void start(String... args)  {
         try {
@@ -65,9 +89,7 @@ public final class InsightsServer extends HttpServlet {
             String portStr = lArgs.stream().filter(s -> s.startsWith("--port=")).findFirst().orElse("--port=30325");
             int port = Integer.parseInt(portStr.split("=")[1]);
 
-            if (lArgs.contains("--test")) {
-                logger.info("Running Test Configuration");
-            }
+            if (lArgs.contains("--test")) LOGGER.info("Running Test Configuration");
 
             frontend = new Server();
             ServerConnector c = new ServerConnector(frontend);
@@ -79,15 +101,21 @@ public final class InsightsServer extends HttpServlet {
             frontend.setHandler(handler);
 
             frontend.start();
-            logger.info("Started Server on port " + port);
+            LOGGER.info("Started Server on port " + port);
         } catch (Exception e) {
-            logger.severe("Error Loading Servers: " + e.getMessage());
+            LOGGER.severe("Error Loading Servers: " + e.getMessage());
         }
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String path = req.getRequestURI().substring(1);
         if (path.equals("")) path = "index.html";
+
+        Map<String, String> params = req.getParameterMap()
+                .entrySet()
+                .stream()
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue()[0]))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         String end = path.split("\\.")[1];
 
@@ -101,6 +129,7 @@ public final class InsightsServer extends HttpServlet {
             f = new File(FRONTEND_FOLDER.getFile(), "404.html");
         }
 
+        // Sending
         if (res.getContentType().startsWith("image")) {
             byte[] buffer = new byte[1024];
             int read;
@@ -108,9 +137,18 @@ public final class InsightsServer extends HttpServlet {
 
             while ((read = is.read(buffer)) != -1) res.getOutputStream().write(buffer, 0, read);
             is.close();
-        } else try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-            String line;
-            while ((line = br.readLine()) != null) res.getWriter().println(line);
+        } else {
+            StringBuilder initialContent = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                String line;
+                while ((line = br.readLine()) != null) initialContent.append(line);
+            }
+            String content = initialContent.toString();
+            content = GLOBAL.apply(content, params);
+            if (DOCUMENT_FUNCTIONS.containsKey(path)) content = DOCUMENT_FUNCTIONS.get(path).apply(content, params);
+
+            res.getWriter().write(content);
+            res.getWriter().close();
         }
     }
 
