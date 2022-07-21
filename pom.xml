@@ -82,7 +82,7 @@
                                         <exclude>META-INF/**/*</exclude>
                                         <exclude>**/*.xsd</exclude>
                                         <exclude>**/*.xml</exclude>
-                                        <exclude>**/*.html</exclude>
+                                        <exclude>**/package.html</exclude>
                                         <exclude>**/*.ico</exclude>
                                         <exclude>**/*.dtd</exclude>
                                     </excludes>
