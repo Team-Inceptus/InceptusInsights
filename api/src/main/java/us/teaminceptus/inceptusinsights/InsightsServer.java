@@ -1,5 +1,6 @@
 package us.teaminceptus.inceptusinsights;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,14 +43,10 @@ public final class InsightsServer extends HttpServlet {
     }
 
     public static Logger LOGGER = Logger.getLogger(DefaultLogger.class.getName());
-    private static final URL FRONTEND_FOLDER = InsightsServer.class.getResource("/frontend/");
 
     private static int port = 30225;
 
     public static Server frontend;
-
-    public InsightsServer() {
-    }
 
     public static void main(String... args) {
         start("--test", "--port=30325");
@@ -71,16 +68,28 @@ public final class InsightsServer extends HttpServlet {
         InsightsServer.player = player;
     }
 
+    public InsightsServer() {
+    }
+
     private static final Map<String, BiFunction<String, Map<String, String>, String>> DOCUMENT_FUNCTIONS = new HashMap<>() {
     };
 
     private static final BiFunction<String, Map<String, String>, String> GLOBAL = (html, params) -> {
         Document doc = Jsoup.parse(html, "UTF-8");
 
+        doc.head().getElementById("server-name").text(server.getServerName());
+
         if (server.getServerIcon() != null) doc.getElementById("server-icon").attr("src", server.getServerIcon().toDataURI());
 
         return doc.outerHtml();
     };
+
+    private static ServletContext context;
+
+    public static boolean isRunning() {
+        if (frontend == null) return false;
+        return frontend.isRunning();
+    }
 
     public static void start(String... args)  {
         try {
@@ -107,9 +116,19 @@ public final class InsightsServer extends HttpServlet {
         }
     }
 
+    private static String FRONTEND_FOLDER = "/frontend/";
+
+    public static void stop() {
+        try {
+            frontend.stop();
+        } catch (Exception e) {
+            LOGGER.severe("Error Stopping Server: " + e.getMessage());
+        }
+    }
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String path = req.getRequestURI().substring(1);
         if (path.equals("")) path = "index.html";
+        if (!path.contains(".")) path = path + "/index.html";
 
         Map<String, String> params = req.getParameterMap()
                 .entrySet()
@@ -122,29 +141,28 @@ public final class InsightsServer extends HttpServlet {
         if (end.equalsIgnoreCase("png") || end.equalsIgnoreCase("ico")) res.setContentType("image/" + end);
         else res.setContentType("text/" + end);
 
-        File f = new File(FRONTEND_FOLDER.getFile(), path);
+        InputStream f = InsightsServer.class.getResourceAsStream(FRONTEND_FOLDER + path);
 
-        if (!f.exists()) {
+        if (f == null) {
             res.setStatus(404);
-            f = new File(FRONTEND_FOLDER.getFile(), "404.html");
+            f = InsightsServer.class.getResourceAsStream(FRONTEND_FOLDER + "404.html");
         }
 
         // Sending
         if (res.getContentType().startsWith("image")) {
             byte[] buffer = new byte[1024];
             int read;
-            FileInputStream is = new FileInputStream(f);
 
-            while ((read = is.read(buffer)) != -1) res.getOutputStream().write(buffer, 0, read);
-            is.close();
+            while ((read = f.read(buffer)) != -1) res.getOutputStream().write(buffer, 0, read);
+            f.close();
         } else {
             StringBuilder initialContent = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(f))) {
                 String line;
                 while ((line = br.readLine()) != null) initialContent.append(line);
             }
             String content = initialContent.toString();
-            content = GLOBAL.apply(content, params);
+            if (end.equalsIgnoreCase("html")) content = GLOBAL.apply(content, params);
             if (DOCUMENT_FUNCTIONS.containsKey(path)) content = DOCUMENT_FUNCTIONS.get(path).apply(content, params);
 
             res.getWriter().write(content);
