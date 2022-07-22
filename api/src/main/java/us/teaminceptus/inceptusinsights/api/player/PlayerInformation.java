@@ -4,6 +4,11 @@ import java.util.Map;
 
 public interface PlayerInformation {
 
-    Map<String, Object> getPlayerInformation(String name);
+    default PlayerData getPlayerInformation(String name) {
+        return getAllPlayers().get(name);
+    }
 
+    Map<String, PlayerData> getAllPlayers();
+
+    Map<String, PlayerData> getOnlinePlayers();
 }
