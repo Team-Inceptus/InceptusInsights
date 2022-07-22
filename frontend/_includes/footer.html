@@ -1,0 +1,10 @@
+<footer class="bar">
+    <p style="width: 50%; justify-self: center">Copyright © 2022-Present Team Inceptus. All Rights Reserved.</p>
+
+    <div style="display: flex; justify-content: flex-start; gap: 1vw; flex-direction: row-reverse; align-items: center; margin: 0 auto; width: 50%; padding-right: 1vw; font-family: 'Montserrat',serif">
+        {% for link in site.data.links %}
+        <a href="{{ link.url }}" class="footer-link" target="_blank">{{ link.name }}</a>
+        {% endfor %}
+    </div>
+
+</footer>
