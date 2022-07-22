@@ -2,8 +2,8 @@
 layout: default
 ---
 
-<div class="minimal">
-    <h1>{{ content }}</h1>
+<div class="minimal {% if page.box %}box{% endif %}">
+    <h1 {% if page.box %} class="no-transition box-border em-1 weight-normal c666" style="padding: 1em; align-content: space-around; text-align: center; inline-size: 17vw; max-inline-size: 500px; overflow: hidden;" {% endif %}>{{ content }}</h1>
 
     <a href="/">🏠 Return Home</a>
 </div>
