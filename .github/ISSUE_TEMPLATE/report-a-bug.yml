@@ -1,0 +1,60 @@
+name: Bug Report
+description: Report an issue with InceptusInsights
+labels: ['unconfirmed bug']
+assignees:
+  - GamerCoer215
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an InceptusInsights Bug. Please provide as much information as possible to help us fix it.
+  - type: dropdown
+    attributes:
+      label: Issue Type
+      description: What kind of issue is this?
+      options:
+        - Frontend | Website Page
+        - Frontend | Jetty Crash
+        - Backend | Server Error/Crash
+        - Backend | Memory Leak/Server Error
+        - Other Unexpected Behavior
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Minecraft Version
+      description: The version of Minecraft that the bug is related to.
+      placeholder: "Minecraft 1.xx.x"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Description
+      description: Please provide a short description of the issue.
+      placeholder: "Ex: Webpage doesn't load"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: How do you reproduce the issue?
+      placeholder: "Ex: Open the webpage and click on the button"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Result / Actual Result
+      description: What is the expected result?
+      placeholder: "Ex: The webpage is supposed to load but it doesn't"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: Any additional information that may help us fix the issue.
+      placeholder: "Ex: I'm using Spigot instead of Paper"
