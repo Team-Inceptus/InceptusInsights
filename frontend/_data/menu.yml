@@ -1,2 +1,4 @@
 - name: Users
   href: /users
+- name: About
+  href: /about
